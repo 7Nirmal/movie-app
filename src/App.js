@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link,Navigate } from "react-router-dom";
+import { Routes, Route,Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {Moviebar} from './Moviebar';
 import {MovieList} from './MovieList';
@@ -8,12 +8,19 @@ import{Addcolor,BarColor} from './Colorgame';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+// import IconButton from '@mui/material/IconButton';
+// import MenuIcon from '@mui/icons-material/Menu';
 import { NotFound } from './NotFound';
 import { Trailer } from './Trailer';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import { TicTacToe } from './tictactoe';
+
  function App() {
    
   const movie = [
@@ -87,21 +94,31 @@ import { Trailer } from './Trailer';
 
     const[movieList,setMovieList]= useState(movie);
     const navigate = useNavigate();
-
-
-    
- 
+    const[mode,setMode] = useState("dark");
+    const theme = createTheme({
+      palette: {
+        mode: mode,
+      },
+    });
 
   return (
-    
-    <>
+    <ThemeProvider theme={theme}>
+       <Paper elevation={4}  style={{minHeight:"100vh",borderRadius:"0px"}}>
+    <div >
      <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" onClick={()=>{navigate("/home")}}>Home</Button>
           <Button color="inherit" onClick={()=>{navigate("/color-game")}}>Color Game</Button>
+          <Button color="inherit" onClick={()=>{navigate("/tic-tac-toe")}}>Tic-Tac-Toe</Button>
+          
           <Button color="inherit" onClick={()=>{navigate("/movie-list")}}>Movie List</Button>
           <Button color="inherit" onClick={()=>{navigate("/movie/add")}}>Add Movie</Button>
+          <Button color="inherit" onClick={()=>{setMode(mode === "dark"?"light":"dark")}}>
+            <IconButton aria-label="delete">
+            {mode==="dark" ? <LightModeIcon/>:<DarkModeIcon/>}
+</IconButton>
+            {mode==="dark"?"light mode":"dark mode"}</Button>
           
         </Toolbar>
       </AppBar>
@@ -111,23 +128,20 @@ import { Trailer } from './Trailer';
        <Route path="/home" element={<><h1>WELCOME TO MOVIE APP!!</h1></>}/>
        <Route path="/movies/:id" element={<Trailer movieList={movieList}/>}/>
        <Route path="/color-game" element={<><Addcolor/>   <BarColor/></>}/>
+       <Route path="/tic-tac-toe" element={<TicTacToe/>}/>
        <Route path="/movie-list" element={
-     <div className="movie">
+     
      <MovieList  movieDetails={movieList} setMovieList={setMovieList}/>
-     </div>}/>
+     }/>
      <Route path="/404" element={<NotFound/>}/>
-     <Route path="*" element={<Navigate replace to = "/404"/>}/>
+     <Route path="*" element  ={<Navigate replace to = "/404"/>}/>
      <Route path="/films" element={<Navigate replace to ="/movie-list" />}/>
      <Route path="/movie/add" element={<Moviebar movieDetails={movie} setMovieList={setMovieList}/>}/>
      </Routes>
       </section>
-    
-  
-     
-    
-
-    
-    </>
+    </div>
+    </Paper >
+    </ThemeProvider>
    
   );
 }
